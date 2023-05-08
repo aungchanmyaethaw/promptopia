@@ -1,10 +1,12 @@
 import { Post } from "@app/create-prompt/page";
 import Link from "next/link";
 import React, { FormEvent } from "react";
+import { BeatLoader } from "react-spinners";
 
 interface FormProps {
   type: String;
   isSubmitting: boolean;
+  isLoading?: boolean;
   post: Post;
   setPost: React.Dispatch<React.SetStateAction<Post>>;
   handleSubmit: (e: FormEvent) => void;
@@ -16,6 +18,7 @@ export default function Form({
   post,
   setPost,
   handleSubmit,
+  isLoading,
 }: FormProps) {
   return (
     <section className="flex-col w-full max-w-full flex-start">
@@ -73,10 +76,14 @@ export default function Form({
 
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="px-5 py-1.5 text-sm bg-primary-orange rounded-full text-white"
+            disabled={isSubmitting || isLoading}
+            className="px-5 py-1.5 text-sm bg-primary-orange rounded-full text-white flex justify-center items-start"
           >
-            {isSubmitting ? `${type}ing...` : type}
+            {isLoading || isSubmitting ? (
+              <BeatLoader color="white" size={10} className="my-1" />
+            ) : (
+              type
+            )}
           </button>
         </div>
       </form>

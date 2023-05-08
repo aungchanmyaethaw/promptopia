@@ -51,7 +51,7 @@ export const PATCH = async (req: Request, { params }: ParamsProps) => {
       { _id: id },
       { prompt, tag }
     );
-    return new Response(JSON.stringify(newPrompt), { status: 201 });
+    return new Response(JSON.stringify(newPrompt), { status: 200 });
   } catch (e: any) {
     return new Response(JSON.stringify({ message: "Something Broke!" }), {
       status: 500,

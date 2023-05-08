@@ -11,6 +11,7 @@ import {
   ClientSafeProvider,
 } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers";
+import { useRouter } from "next/navigation";
 
 type ProviderRecord = Record<
   LiteralUnion<BuiltInProviderType, string>,
@@ -22,6 +23,7 @@ export default function Nav() {
 
   const [providers, setProviders] = useState<ProviderRecord | null>(null);
   const [toggleDropdown, setToggleDropdown] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleProvider = async () => {
@@ -53,7 +55,9 @@ export default function Nav() {
             </Link>
             <button
               type="button"
-              onClick={() => signOut()}
+              onClick={() => {
+                signOut();
+              }}
               className="outline_btn"
             >
               Sign Out

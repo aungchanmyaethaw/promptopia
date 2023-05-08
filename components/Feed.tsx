@@ -7,6 +7,7 @@ import {
   SetStateAction,
 } from "react";
 import PromptCard from "./PromptCard";
+import { BeatLoader } from "react-spinners";
 
 interface CreaterProps {
   __v: number;
@@ -32,7 +33,7 @@ interface PromptCardProps {
 const PromptCardList = ({ data, handleTagClick }: PromptCardProps) => {
   return (
     <div className="mt-16 prompt_layout">
-      {data.map((post) => (
+      {data?.map((post) => (
         <PromptCard
           key={post._id}
           post={post}
@@ -44,6 +45,7 @@ const PromptCardList = ({ data, handleTagClick }: PromptCardProps) => {
 };
 
 export default function Feed() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [prompts, setPrompts] = useState<PromptProps[]>([]);
   const [searchText, setSearchText] = useState<string>("");
 
@@ -54,11 +56,14 @@ export default function Feed() {
   useEffect(() => {
     const getPrompts = async () => {
       try {
+        setIsLoading(true);
         const res = await fetch(`/api/prompt?q=${searchText}`);
         const prompts = await res.json();
         setPrompts(prompts);
       } catch (e: any) {
         throw new Error(e.message);
+      } finally {
+        setIsLoading(false);
       }
     };
     getPrompts();
@@ -76,7 +81,13 @@ export default function Feed() {
           className="search_input peer"
         />
       </div>
-      <PromptCardList data={prompts} handleTagClick={setSearchText} />
+      {isLoading ? (
+        <section className="py-20">
+          <BeatLoader />
+        </section>
+      ) : (
+        <PromptCardList data={prompts} handleTagClick={setSearchText} />
+      )}
     </section>
   );
 }

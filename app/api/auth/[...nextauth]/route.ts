@@ -2,13 +2,13 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@utils/database";
 import User from "@models/user";
-import { DefaultSession, Profile } from "next-auth";
+import { Profile } from "next-auth";
 
 const clientId: string = process.env.GOOGLE_ID || "";
 
 const clientSecret: string = process.env.GOOGLE_CLIENT_SECRET || "";
 
-const secret: string = process.env.NEXTAUTH_SECRET || "";
+const secret: string | undefined = process.env.NEXTAUTH_SECRET;
 
 interface ProfileProps extends Profile {
   picture?: string;

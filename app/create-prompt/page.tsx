@@ -1,9 +1,10 @@
 "use client";
 import Form from "@components/Form";
-
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { BeatLoader } from "react-spinners";
+import { toast } from "react-hot-toast";
 
 export interface Post {
   prompt: string;
@@ -11,9 +12,10 @@ export interface Post {
 }
 
 export default function CreatePrompt() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [post, setPost] = useState<Post>({ prompt: "", tag: "" });
-  const { data: session }: any = useSession();
+  const { data: session, status }: any = useSession();
 
   const router = useRouter();
   const handleCreate = async (e: FormEvent) => {
@@ -31,8 +33,11 @@ export default function CreatePrompt() {
           tag: post.tag,
         }),
       });
-      router.push("/");
-      return response;
+
+      if (response.status === 201) {
+        toast.success("Successfully created!");
+      }
+      setTimeout(() => router.push("/"), 1500);
     } catch (e: any) {
       console.log(e.message);
     } finally {
@@ -40,15 +45,25 @@ export default function CreatePrompt() {
     }
   };
 
+  if (status === "loading") {
+    return <BeatLoader />;
+  }
+
   return (
     <div>
-      <Form
-        post={post}
-        type="Create"
-        isSubmitting={isSubmitting}
-        setPost={setPost}
-        handleSubmit={handleCreate}
-      />
+      {status === "authenticated" ? (
+        <Form
+          post={post}
+          type="Create"
+          isSubmitting={isSubmitting}
+          setPost={setPost}
+          handleSubmit={handleCreate}
+        />
+      ) : (
+        <div className=" !text-xl md:!text-2xl font-semibold orange_gradient">
+          Please sign in to access this page.
+        </div>
+      )}
     </div>
   );
 }
